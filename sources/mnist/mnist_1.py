@@ -58,7 +58,18 @@ class NeuralNetwork:
 
     # 검증(테스트)
     def test(self, inputs_list):
-        pass
+        # 1. 입력 리스트를 2차원 행렬로 변환
+        inputs = numpy.array(inputs_list, ndmin=2).T
+        # 2. 은닉계층으로 들어오는 값 계산
+        hidden_inputs = numpy.dot(self.wih, inputs)
+        # 3. 은닉계층으로 나가는 값 계산
+        hidden_outputs = self.sigmoid(hidden_inputs)
+        # 4. 최종계층으로 들어오는 값 계산
+        final_inputs = numpy.dot(self.who, hidden_outputs)
+        # 5. 최종계층으로 나가는 값 계산 
+        final_outputs = self.sigmoid(final_inputs)
+
+        return final_outputs
 
 input_nodes = 784
 hidden_nodes = 100
@@ -74,7 +85,7 @@ training_data_file.close()
 
 for record in training_data_list:
     # record의 값을 [,]로 구분
-    all_valeus = record.split(',')
+    all_values = record.split(',')
     # 값 조정 -> X/255.0 * 0.99 + 0.01
     inputs = (numpy.asfarray(all_values[1:])/255.0 * 0.99) + 0.01
     # target 리스트 준비 (10개짜리 빈 list)
@@ -92,6 +103,6 @@ test_data_file = open('../dataset/mnist_test_10.csv','r')
 test_data_list = test_data_file.readlines()
 test_data_file.close()
 
-all_values = test_data_list[9].split(',')
-print(all_valeus[0])
+all_values = test_data_list[2].split(',')
+print(all_values[0])
 print(model.test((numpy.asfarray(all_values[1:])/255.0 * 0.99) + 0.01))
